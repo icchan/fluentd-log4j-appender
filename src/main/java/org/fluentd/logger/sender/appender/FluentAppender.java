@@ -1,6 +1,5 @@
 package org.fluentd.logger.sender.appender;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,6 +7,9 @@ import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
 import org.fluentd.logger.FluentLogger;
 
+/**
+ * Basic implementation of a fluent appender for log4j
+ */
 public class FluentAppender extends AppenderSkeleton {
 
 	private FluentLogger fluentLogger;
@@ -19,34 +21,52 @@ public class FluentAppender extends AppenderSkeleton {
 	protected int port = 24224;
 	
 	protected String label = "label";
-	
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	/**
+	 * Initialise the fluent logger
+	 */
 	@Override
 	public void activateOptions() {
 		try {
 			fluentLogger = FluentLogger.getLogger(tag, host, port);
 		} catch (RuntimeException e) {
-//			addError("Cannot create FluentLogger.", e);
+			e.printStackTrace(); // TODO replace this with something useful
 		}
 		super.activateOptions();
 	}
 	
+	/**
+	 * Flush the fluent logger before closing
+	 */
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
-		try {
-			fluentLogger.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		fluentLogger.flush();
 	}
 
 	@Override
 	public boolean requiresLayout() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * Write to the log
+	 */
 	@Override
 	protected void append(LoggingEvent event) {
 		Map<String, Object> messages = new HashMap<String, Object>();

@@ -2,24 +2,26 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="true">
-  <appender name="stdout" class="org.apache.log4j.ConsoleAppender">
-     <param name="Target" value="System.out" /> 
-     <layout class="org.apache.log4j.PatternLayout">
-        <param name="ConversionPattern" value="%d %5p %c{1} - %m%n" />
-     </layout>
-  </appender>
+	<appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %5p %c{1} - %m%n" />
+		</layout>
+	</appender>
 
-  <appender name="flientd" class="org.fluentd.logger.sender.appender.FluentAppender" >
-     <layout class="org.apache.log4j.PatternLayout">
-        <param name="ConversionPattern" value="%d %5p %c - %m" />
-     </layout>
-  </appender>
+	<appender name="fluentd" class="org.fluentd.logger.sender.appender.FluentAppender">
+		<param name="Host" value="localhost" />
+		<param name="Port" value="24224" />
+		<param name="Label" value="log4j" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %5p %c - %m" />
+		</layout>
+	</appender>
 
-  <!-- テストクラスの FQCN で指定できないので、root ロガーに設定する
-  info にしておかないとかなりウザい -->
-  <root>
-    <level value ="info" />
-    <appender-ref ref="stdout"/>
-    <appender-ref ref="flientd" />
-  </root>
+	<!-- テストクラスの FQCN で指定できないので、root ロガーに設定する info にしておかないとかなりウザい -->
+	<root>
+		<level value="info" />
+		<appender-ref ref="stdout" />
+		<appender-ref ref="fluentd" />
+	</root>
 </log4j:configuration>
